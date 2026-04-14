@@ -1,4 +1,4 @@
-# Waypoint Manager — Artboard slot & Luna sidebar reference
+# Waypoint Steps — Artboard slot & Luna sidebar reference
 
 This document maps how the **center “artboard” column** and the **right-hand Luna sidebar** fit together, which files implement them, and how this app wires them up.
 

@@ -1,6 +1,6 @@
 # Syncing the Luna sidebar with another GitHub project
 
-Waypoint Manager currently keeps **`luna-sidebar/`** inside this repository. GitHub only tracks one history here, so edits in a **separate** sidebar repo do not appear in this project until you **link** the two repos and **pull** updates (or automate that step).
+Waypoint Steps currently keeps **`luna-sidebar/`** inside this repository. GitHub only tracks one history here, so edits in a **separate** sidebar repo do not appear in this project until you **link** the two repos and **pull** updates (or automate that step).
 
 Use this guide when the sidebar is the **source of truth** in another GitHub repository and you want this app to consume it.
 
@@ -17,7 +17,7 @@ Add a root **`package.json`** with:
 - **`peerDependencies`**: `"react"`, `"react-dom"` (versions compatible with this app)
 - **`files`**: which paths are included when the package is installed from git
 
-### 2. This repository (Waypoint Manager)
+### 2. This repository (Waypoint Steps)
 
 1. **Stop editing** the vendored copy under `luna-sidebar/` here (or remove that folder once the dependency works).
 2. In **`package.json`**, add a dependency on the other repo, for example:
@@ -38,7 +38,7 @@ After changes are **pushed** to the sidebar repo:
 npm update luna-sidebar
 ```
 
-Or change the `#branch` / tag in `package.json`, then run **`npm install`**. Commit **`package-lock.json`** (and any `package.json` change) in Waypoint Manager.
+Or change the `#branch` / tag in `package.json`, then run **`npm install`**. Commit **`package-lock.json`** (and any `package.json` change) in Waypoint Steps.
 
 **Note:** Git does **not** auto-update this repo when the other repo is pushed. That step is manual unless you add CI (below).
 
@@ -77,23 +77,23 @@ This repo stores **which commit** of the other repo it uses. No npm package is r
 Think of this as two notebooks:
 
 - Notebook A = **`waypoint-sidebar`** (where sidebar code lives)
-- Notebook B = **`WaypointManager`** (your app)
+- Notebook B = **`waypoint-steps`** (your app)
 
 Notebook B keeps a **bookmark** to a commit in Notebook A.
 
 1. Edit sidebar in `waypoint-sidebar`, then commit and push there.
-2. In `WaypointManager`, run:
+2. In **Waypoint Steps** (this repo), run:
 
 ```powershell
 .\update-sidebar.ps1
 ```
 
-3. Push `WaypointManager` so everyone gets the new bookmark.
+3. Push **Waypoint Steps** so everyone gets the new bookmark.
 
 Rules:
 
 - Make sidebar code changes in `waypoint-sidebar`.
-- Move the bookmark in `WaypointManager` with `.\update-sidebar.ps1`.
+- Move the bookmark in **Waypoint Steps** with `.\update-sidebar.ps1`.
 - If teammate pulls and sidebar looks old, run:
 
 ```bash
@@ -106,22 +106,22 @@ git submodule update --init --recursive
 
 Put both parts in **one** repo, for example:
 
-- `apps/waypoint-manager`
+- `apps/waypoint-steps`
 - `packages/luna-sidebar`
 
 Use **npm/pnpm/yarn workspaces**. One **push** updates everything; there is no cross-repo sync.
 
 ---
 
-## Automatic updates (“push sidebar → PR in Waypoint Manager”)
+## Automatic updates (“push sidebar → PR in Waypoint Steps”)
 
 GitHub will not merge two repos by itself. Typical automation:
 
-1. **GitHub Actions** on the **sidebar** repository (on push to `main` or on a **release**): use a **PAT** or GitHub App with permission on **Waypoint Manager** to:
+1. **GitHub Actions** on the **sidebar** repository (on push to `main` or on a **release**): use a **PAT** or GitHub App with permission on **Waypoint Steps** to:
    - open a **PR** that bumps the git dependency / lockfile, or  
    - update the **submodule** pointer and open a PR.
 
-2. **Publish to npm** (or GitHub Packages) from the sidebar repo; enable **Dependabot** or **Renovate** in Waypoint Manager to open version-bump PRs.
+2. **Publish to npm** (or GitHub Packages) from the sidebar repo; enable **Dependabot** or **Renovate** in Waypoint Steps to open version-bump PRs.
 
 ---
 
