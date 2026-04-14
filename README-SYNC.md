@@ -1,8 +1,74 @@
 # Syncing the Luna sidebar with another GitHub project
 
-Waypoint Steps currently keeps **`luna-sidebar/`** inside this repository. GitHub only tracks one history here, so edits in a **separate** sidebar repo do not appear in this project until you **link** the two repos and **pull** updates (or automate that step).
+Waypoint Steps consumes **`waypoint-sidebar`** on GitHub. Nothing updates by itself—you pull changes from the original **on purpose** (or bump a submodule pointer).
 
-Use this guide when the sidebar is the **source of truth** in another GitHub repository and you want this app to consume it.
+---
+
+## Remotes (this project)
+
+| Remote     | Repository | Role |
+|------------|------------|------|
+| **`origin`**   | [`AceConcept/waypoint-steps`](https://github.com/AceConcept/waypoint-steps) | **Your app** — normal `git fetch` / `git push` |
+| **`upstream`** | [`AceConcept/waypoint-sidebar`](https://github.com/AceConcept/waypoint-sidebar) | **Canonical sidebar** — `git fetch` (and merge only if you use the merge workflow below) |
+
+If **`upstream`** is missing (e.g. fresh clone), add it once:
+
+```bash
+git remote add upstream https://github.com/AceConcept/waypoint-sidebar.git
+```
+
+---
+
+## Best simple pattern: `upstream` remote + merge
+
+Use this when the sidebar lives as **regular tracked files** in this repo and you want **`waypoint-sidebar`** history merged into **`main`** (typical “spin-off + periodic sync” setup).
+
+**Nothing runs automatically.** You choose when to fetch + merge (e.g. weekly or before a release).
+
+Whenever you want the latest from the original:
+
+```bash
+git fetch upstream
+git checkout main
+git merge upstream/main
+```
+
+Or, if you prefer a linear history and know how to resolve rebase conflicts:
+
+```bash
+git fetch upstream
+git checkout main
+git rebase upstream/main
+```
+
+Push your updated `main` to **your** GitHub repo as usual:
+
+```bash
+git push origin main
+```
+
+**Naming**
+
+- **`origin`** → your GitHub repo (**Waypoint Steps**), where you **push**.
+- **`upstream`** → **waypoint-sidebar**, where you **only fetch** (and merge/rebase into `main`).
+
+**What this does**
+
+Brings commits from **`waypoint-sidebar`** into this repo. Changes under paths that mirror the upstream tree (for example sidebar sources under the same relative layout) come along; you resolve conflicts if both sides edited the same lines.
+
+**What it does not do**
+
+Run on its own—you decide when to sync.
+
+**Keep merges predictable**
+
+Use the **same paths** in both repos for sidebar code when possible. This project keeps the submodule checkout at **`luna-sidebar/`** (see below), which mirrors checking out **`waypoint-sidebar`** at that path.
+
+If you **heavily customize** files that upstream also changes, merges get noisy—then moving the sidebar into a **shared npm package** (Option A) is the usual upgrade path.
+
+**Submodule vs merge**
+
+This repo currently tracks the sidebar as a **Git submodule** at **`luna-sidebar/`** (not as a root-level merge of `upstream/main` into `waypoint-steps`). **Do not** run `git merge upstream/main` at the **root** of this repo while you still rely on the submodule for the same tree unless you are **deliberately migrating** away from submodules—use the submodule workflow in [Option B](#option-b--git-submodule-other-repo-as-a-folder) instead, or complete a migration first.
 
 ---
 
@@ -62,7 +128,8 @@ import { LunaSidebar } from '../luna-sidebar/src/luna-sidebar/index.js'
 ```
 
 3. Commit the submodule setup (`.gitmodules`, `luna-sidebar` gitlink, and import updates).
-2. When the sidebar repo has new commits you want:
+
+4. When the sidebar repo has new commits you want:
 
 ```bash
 git submodule update --remote luna-sidebar
@@ -132,13 +199,16 @@ GitHub will not merge two repos by itself. Typical automation:
 | Clear ownership, normal `npm install`, versioned consumption | **Git or npm dependency** from the sidebar repo (Option A) |
 | Keep a folder in-tree without publishing a package | **Submodule** (Option B) |
 | One push always updates app + sidebar | **Monorepo** (Option C) |
+| Periodic merge of sidebar `main` into your `main` (vendored layout) | **`upstream` + merge/rebase** (section [Best simple pattern](#best-simple-pattern-upstream-remote--merge)) |
 | A PR appears here when the sidebar repo changes | **CI** on top of A or B |
 
 ---
 
 ## Current state of this project
 
-- **`luna-sidebar/`** is a **Git submodule** pointing to `https://github.com/AceConcept/waypoint-sidebar.git`.
+- **`origin`** → **`https://github.com/AceConcept/waypoint-steps.git`** (push your app here).
+- **`upstream`** → **`https://github.com/AceConcept/waypoint-sidebar.git`** (fetch; merge/rebase only if you adopt the merge workflow and drop or replace the submodule model).
+- **`luna-sidebar/`** is a **Git submodule** pointing at **`waypoint-sidebar`**. Day-to-day sidebar updates: **`.\update-sidebar.ps1`** (or `git submodule update --remote` + commit).
 - `src/App.tsx` imports `LunaSidebar` from `../luna-sidebar/src/luna-sidebar/index.js`.
 
-When you adopt Option A or B, remove or stop maintaining the duplicate **`luna-sidebar/`** copy here so there is a single source of truth.
+When you adopt Option A or a merge-only layout, remove or stop maintaining a duplicate **`luna-sidebar/`** copy here so there is a single source of truth.
