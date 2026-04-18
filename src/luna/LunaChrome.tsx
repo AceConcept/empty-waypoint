@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { LunaCanvasScaleContext } from '../../luna-sidebar/src/luna-sidebar/index.js'
 import {
   CANVAS_H,
   CANVAS_W,
@@ -106,7 +107,9 @@ export function LunaChrome({
                 </div>
               </div>
               <div className="luna-space-right" aria-hidden="true" />
-              {sidebar({ expanded, onExpandedChange: setExpanded })}
+              <LunaCanvasScaleContext.Provider value={scale}>
+                {sidebar({ expanded, onExpandedChange: setExpanded })}
+              </LunaCanvasScaleContext.Provider>
             </div>
           </div>
         </div>

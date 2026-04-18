@@ -26,7 +26,7 @@ function App() {
           expanded={expanded}
           onExpandedChange={onExpandedChange}
           initialActiveId={step.id}
-          onActiveItemChange={(id) => {
+          onActiveItemChange={(id: string) => {
             const hit = FLOW_SIDEBAR_ITEMS.find((item) => item.id === id)
             if (hit) goToStepById(hit.id)
           }}
