@@ -189,6 +189,8 @@
   transform: scale(var(--luna-scale));
   transform-origin: top right;
   pointer-events: none;
+  /* Match LunaSidebar drawer timing so shell width doesn’t jump while inner flex reflows (rail “jiggle”). */
+  transition: width 0.35s ease-out;
 }
 
 .luna-canvas-row > .sidebar-shell.UxzaHe.luna-sidebar-dock.m2T_PB {

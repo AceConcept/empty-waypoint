@@ -118,6 +118,7 @@
   display: flex;
   flex-direction: row;
   align-items: stretch;
+  contain: layout;
 }
 
 .sidebar-drawer {
@@ -165,6 +166,8 @@
   align-items: stretch;
   padding: 0;
   overflow: hidden;
+  /* Reserve gutter before overflow becomes scrollable so opening doesn’t shift the rail column. */
+  scrollbar-gutter: stable;
 }
 
 .sidebar-panel-inner.Q1PD1g.m2T_PB {
@@ -172,8 +175,6 @@
   opacity: 1;
   overflow-x: hidden;
   overflow-y: auto;
-  /* Reserve space for scrollbar so flex row width doesn’t reflow and clip the rule gutter */
-  scrollbar-gutter: stable;
 }
 
 .sidebar-panel-content {
@@ -295,7 +296,10 @@
 
 .sidebar-rail {
   flex: 0 0 var(--sidebar-rail-w);
+  flex-shrink: 0;
   width: var(--sidebar-rail-w);
+  min-width: var(--sidebar-rail-w);
+  max-width: var(--sidebar-rail-w);
   align-self: stretch;
   min-height: 100%;
   border: 0;
@@ -309,6 +313,8 @@
   padding: 1.125rem 0;
   cursor: pointer;
   pointer-events: auto;
+  contain: layout style;
+  backface-visibility: hidden;
 }
 
 .rail-label {
@@ -318,6 +324,8 @@
   font-size: calc(0.6875rem * var(--sidebar-rail-font-mult));
   font-weight: 600;
   color: #fff;
+  transform: translateZ(0);
+  text-rendering: geometricPrecision;
 }
 
 .rail-dot {
