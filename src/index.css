@@ -47,7 +47,7 @@ html {
   background: #fff;
 }
 
-/* Default: single flex child fills #root. Luna may grow taller (footer below fold) — see .luna-root. */
+/* Default: single flex child fills #root. */
 #root > * {
   flex: 1;
   min-height: 0;
@@ -55,7 +55,7 @@ html {
   flex-direction: column;
 }
 
-/* Luna: allow document scroll so .luna-footer-slot below min-height:100dvh stage is reachable */
+/* Luna: allow .luna-root to size to its content */
 #root > .luna-root {
   flex: 1 0 auto;
   min-height: min-content;

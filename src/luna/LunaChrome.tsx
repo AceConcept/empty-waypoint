@@ -4,7 +4,6 @@ import {
   CANVAS_H,
   CANVAS_W,
   getCanvasContainScale,
-  getOtfFooterDesignHeightPx,
   getSidebarShellDesignWidthPx,
   getViewportSize,
 } from 'waypoint-sidebar/src/luna-sidebar/canvasScale.js'
@@ -20,13 +19,11 @@ export type LunaChromeSidebarControls = {
 
 type LunaChromeProps = {
   children?: ReactNode
-  footerBackgroundUrl?: string
   sidebar: (controls: LunaChromeSidebarControls) => ReactNode
 }
 
 export function LunaChrome({
   children,
-  footerBackgroundUrl,
   sidebar,
 }: LunaChromeProps) {
   const layoutRef = useRef<HTMLDivElement>(null)
@@ -60,7 +57,6 @@ export function LunaChrome({
   useLayoutEffect(() => {
     const layout = layoutRef.current
     if (!layout) return
-    const scaledFooterH = getOtfFooterDesignHeightPx() * scale
     const shellW = getSidebarShellDesignWidthPx(expanded)
     const slotScale = scale * LUNA_CENTER_SLOT
     const centerW = CANVAS_W * slotScale
@@ -68,19 +64,11 @@ export function LunaChrome({
     const rowMinH = CANVAS_H * scale
     layout.style.setProperty('--luna-scale', String(scale))
     layout.style.setProperty('--luna-design-surface-scale', String(slotScale))
-    layout.style.setProperty('--luna-scaled-footer-h', `${scaledFooterH}px`)
     layout.style.setProperty('--luna-shell-design-w', `${shellW}px`)
     layout.style.setProperty('--luna-center-column-width', `${centerW}px`)
     layout.style.setProperty('--luna-center-column-height', `${centerH}px`)
     layout.style.setProperty('--luna-canvas-row-min-h', `${rowMinH}px`)
   }, [scale, expanded])
-
-  const footerSlotStyle =
-    footerBackgroundUrl != null && footerBackgroundUrl !== ''
-      ? { backgroundImage: `url(${footerBackgroundUrl})` }
-      : undefined
-
-  const scaledFooterH = getOtfFooterDesignHeightPx() * scale
 
   return (
     <div ref={layoutRef} className="luna-root">
@@ -113,21 +101,6 @@ export function LunaChrome({
             </div>
           </div>
         </div>
-      </div>
-      <div
-        className="luna-footer-slot"
-        style={{ height: scaledFooterH, ...footerSlotStyle }}
-      >
-        <div
-          className="luna-footer-artboard"
-          aria-hidden="true"
-          style={{
-            width: CANVAS_W,
-            height: getOtfFooterDesignHeightPx(),
-            transform: `scale(${scale})`,
-            transformOrigin: '0 0',
-          }}
-        />
       </div>
     </div>
   )

@@ -1,5 +1,5 @@
 /*
-  App-owned shell: gutters, artboard scale, scrim, footer, docked sidebar overrides.
+  App-owned shell: gutters, artboard scale, scrim, docked sidebar overrides.
   Load after LunaSidebar.css so :root tokens (--canvas-w, --canvas-h, etc.) exist.
 */
 
@@ -48,8 +48,8 @@
 }
 
 /*
-  Viewport-wide dimmer: fixed so it covers gutters + center + footer band while
-  drawer is open; z-index above design surface (40), below docked sidebar (45).
+  Viewport-wide dimmer: fixed so it covers gutters + center while drawer is open;
+  z-index above design surface (40), below docked sidebar (45).
 */
 .luna-canvas-row-scrim {
   position: fixed;
@@ -155,27 +155,6 @@
   align-items: stretch;
   justify-content: center;
   overflow: auto;
-}
-
-.luna-root > .luna-footer-slot {
-  position: relative;
-  overflow: hidden;
-  flex: 0 0 auto;
-  align-self: stretch;
-  width: 100%;
-  background-color: #0a0a0a;
-  background-repeat: repeat;
-  background-position: 0 0;
-  background-size: auto;
-}
-
-/* Design-sized inner; width/height/transform from LunaChrome (same scale as main artboard) */
-.luna-root > .luna-footer-slot > .luna-footer-artboard {
-  position: absolute;
-  left: 0;
-  top: 0;
-  background: transparent;
-  pointer-events: none;
 }
 
 /* Docked sidebar: same scale as design surface, design-sized box before transform */
